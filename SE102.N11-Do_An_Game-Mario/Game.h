@@ -12,10 +12,8 @@ using namespace std;
 #include "Texture.h"
 #include "KeyEventHandler.h"
 #include "Scene.h"
+#include "Define.h"
 
-#define MAX_FRAME_RATE 100
-#define KEYBOARD_BUFFER_SIZE 1024
-#define KEYBOARD_STATE_SIZE 256
 
 
 

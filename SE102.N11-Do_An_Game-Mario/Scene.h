@@ -42,3 +42,7 @@ public:
 };
 
 typedef CSceneKeyHandler* LPSCENEKEYHANDLER;
+
+class Scene
+{
+};

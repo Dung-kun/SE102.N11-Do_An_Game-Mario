@@ -1,0 +1,7 @@
+mario 10k
+brick 20k
+goomba 30k
+coin: 40k
+cloud: 50k
+portal: 60k
+ground: 70k

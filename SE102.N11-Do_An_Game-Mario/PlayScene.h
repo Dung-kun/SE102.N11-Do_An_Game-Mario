@@ -6,6 +6,8 @@
 #include "Brick.h"
 #include "Mario.h"
 #include "Goomba.h"
+#include "Map.h"
+#include "Grid.h"
 //#include "Koopas.h"
 
 
@@ -14,14 +16,16 @@ class CPlayScene: public CScene
 protected: 
 	// A play scene has to have player, right? 
 	LPGAMEOBJECT player;					
-
+	CMap* current_map = NULL;
+	CGrid* grid = new CGrid();
 	vector<LPGAMEOBJECT> objects;
 
 	void _ParseSection_SPRITES(string line);
 	void _ParseSection_ANIMATIONS(string line);
-
+	void _ParseSection_TEXTURES(string line);
 	void _ParseSection_ASSETS(string line);
 	void _ParseSection_OBJECTS(string line);
+	void _ParseSection_TILEMAP_DATA(string line);
 
 	void LoadAssets(LPCWSTR assetFile);
 	

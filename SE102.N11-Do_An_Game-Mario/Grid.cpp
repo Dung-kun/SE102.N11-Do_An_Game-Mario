@@ -28,31 +28,14 @@ CGrid::~CGrid()
 		}
 }
 
-void CGrid::SetFile(char* str)
-{
-	filepath = str;
-}
 
-void CGrid::ReloadGrid()
+void CGrid::Clear()
 {
 	for (int i = 0; i < GRID_CELL_MAX_ROW; i++)
 		for (int j = 0; j < GRID_CELL_MAX_COLUMN; j++)
 		{
 			cells[i][j].clear();
 		}
-
-
-	int id, type, direction, w, h, model, n;
-	float x, y;
-
-	ifstream inp(filepath, ios::in);
-	inp >> n;
-	for (int i = 0; i < n; i++)
-	{
-		inp >> id >> type >> direction >> x >> y >> w >> h >> model;
-		Insert(id, type, direction, x, y, w, h, model);
-	}
-	inp.close();
 }
 
 CGameObject* CGrid::GetNewObject(int type, float x, float y, int w, int h, int Model)
@@ -129,15 +112,15 @@ void CGrid::Insert(int id, int type, int direction, float x, float y, int w, int
 void CGrid::Insert(CGameObject* obj)
 {
 	float l, t, r, b;
-	
+
 
 	obj->GetBoundingBox(l, t, r, b);
 	int top = (int)(t / GRID_CELL_HEIGHT);
 	int bottom = (int)(b / GRID_CELL_HEIGHT);
 	int left = (int)(l / GRID_CELL_WIDTH);
 	int right = (int)(r / GRID_CELL_WIDTH);
-	
-	
+
+
 	if (obj == NULL)
 		return;
 
@@ -145,4 +128,47 @@ void CGrid::Insert(CGameObject* obj)
 		for (int j = left; j <= right; j++) {
 			cells[i][j].push_back(obj);
 		}
+
+}
+
+void CGrid::UpdateGrid(vector<CGameObject*>& ListObj)
+{
+	float cx, cy;
+	CGame::GetInstance()->GetCamPos(cx, cy);
+	unordered_map<int, CGameObject*> mapObject;
+
+	int index = 0;
+
+	int bottom = (int)((cy + SCREEN_HEIGHT + 1) / GRID_CELL_HEIGHT);
+	int top = (int)((cy - 1) / GRID_CELL_HEIGHT);
+
+	int left = (int)((cx - 1) / GRID_CELL_WIDTH);
+	int right = (int)((cx + SCREEN_WIDTH + 1) / GRID_CELL_WIDTH);
+
+	for (int i = top; i <= bottom; i++)
+		for (int j = left; j <= right; j++) {
+			for (UINT k = 0; k < cells[i][j].size(); k++)
+			{
+				if (index >= ListObj.size()) return;
+				if ((!cells[i][j].at(k)->IsDeleted()) && cells[i][j].at(k)->isAlive()) // còn tồn tại
+				{
+					float l, t, r, b;
+					ListObj.at(index)->GetBoundingBox(l, t, r, b);
+					int topObj = (int)(t / GRID_CELL_HEIGHT);
+					int bottomObj = (int)(b / GRID_CELL_HEIGHT);
+					int leftObj = (int)(l / GRID_CELL_WIDTH);
+					int rightObj = (int)(r / GRID_CELL_WIDTH);
+					if ((topObj < top || bottomObj > bottom || leftObj < left || rightObj > right)) {
+						cells[i][j].erase(cells[i][j].begin() + k);
+						this->Insert(ListObj[index++]);
+						--k;
+					}
+				}
+			}
+		}
+
+	//for (auto& x : mapObject)
+	//{
+	//	ListObj.push_back(x.second);
+	//}
 }

@@ -33,21 +33,20 @@ class CGrid
 {
 private:
 	vector<CGameObject*> cells[GRID_CELL_MAX_ROW][GRID_CELL_MAX_COLUMN];
-	char* filepath;
+
 
 public:
 	CGrid();
 	~CGrid();
 
-	void SetFile(char* str); // Đọc các object từ file
-	void ReloadGrid();
+	void Clear();
 
 
 	CGameObject* GetNewObject(int type, float x, float y, int w, int h, int Model);
 	void Insert(int id, int type, int direction, float x, float y, int w, int h, int Model); //Thêm object vào grid
 	void Insert(CGameObject* obj); //Thêm object vào grid
 	void GetListObject(vector<CGameObject*>& ListObj);
-
+	void UpdateGrid(vector<CGameObject*>& ListObj);
 };
 
 #endif

@@ -29,6 +29,7 @@ protected:
 
 	int state;
 
+	int health = 0;
 	bool isDeleted = false;
 
 public:
@@ -36,6 +37,9 @@ public:
 	void SetSpeed(float vx, float vy) { this->vx = vx, this->vy = vy; }
 	void GetPosition(float& x, float& y) { x = this->x; y = this->y; }
 	void GetSpeed(float& vx, float& vy) { vx = this->vx; vy = this->vy; }
+	bool isAlive() {
+		return this->health;
+	}
 	int GetId() {
 		return id;
 	}

@@ -47,7 +47,7 @@ txt-game\scene\tile-map\world1-tile-map.txt
 4	1808	96
 4	1840	128
 
-# BRICKS
+#BRICKS
 1	0	416
 1	16	416
 1	32	416

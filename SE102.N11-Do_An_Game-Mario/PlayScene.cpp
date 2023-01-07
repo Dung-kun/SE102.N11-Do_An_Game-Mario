@@ -134,7 +134,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 
 		DebugOut(L"[INFO] Player object has been created!\n");
 		break;
-	case OBJECT_TYPE_GOOMBA: obj = new CGoomba(x,y); break;
+	case OBJECT_TYPE_GOOMBA: obj = new CGoomba(x,y,1); break;
 	case OBJECT_TYPE_BRICK: obj = new CBrick(x,y); break;
 	case OBJECT_TYPE_COIN: obj = new CCoin(x, y); break;
 
@@ -292,34 +292,38 @@ void CPlayScene::Load()
 }
 
 void CPlayScene::Update(DWORD dt)
-{
-	// We know that Mario is the first object in the list hence we won't add him into the colliable object list
-	// TO-DO: This is a "dirty" way, need a more organized way 
+{	
 
-	//vector<LPGAMEOBJECT> coObjects;
-	//for (size_t i = 1; i < objects.size(); i++)
-	//{
-	//	coObjects.push_back(objects[i]);
-	//}
+	grid->UpdateGrid(objects);
+	vector<LPGAMEOBJECT> coObjects;
+	objects.clear();
+	coObjects.clear();
 
-	//for (size_t i = 0; i < objects.size(); i++)
-	//{
-	//	objects[i]->Update(dt, &coObjects);
-	//}
+	grid->GetListObject(objects);
+
+	for (size_t i = 1; i < objects.size(); i++)
+	{
+		coObjects.push_back(objects[i]);
+	}
+
+
+	player->Update(dt, &coObjects);
+
+
+	for (size_t i = 0; i < objects.size(); i++)
+	{
+		objects[i]->Update(dt, &coObjects);
+	}
 
 
 	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
 	if (player == NULL) return; 
 
-	objects.clear();
 
 	// Update camera to follow mario
 	float cx, cy;
-	vector<LPGAMEOBJECT> coObjects;
-	grid->GetListObject(coObjects);
 
-	objects = coObjects;
-	player->Update(dt, &coObjects);
+
 	player->GetPosition(cx, cy);
 
 	CGame *game = CGame::GetInstance();
@@ -384,20 +388,20 @@ bool CPlayScene::IsGameObjectDeleted(const LPGAMEOBJECT& o) { return o == NULL; 
 
 void CPlayScene::PurgeDeletedObjects()
 {
-	vector<LPGAMEOBJECT>::iterator it;
-	for (it = objects.begin(); it != objects.end(); it++)
-	{
-		LPGAMEOBJECT o = *it;
-		if (o->IsDeleted())
-		{
-			delete o;
-			*it = NULL;
-		}
-	}
+	//vector<LPGAMEOBJECT>::iterator it;
+	//for (it = objects.begin(); it != objects.end(); it++)
+	//{
+	//	LPGAMEOBJECT o = *it;
+	//	if (o->IsDeleted())
+	//	{
+	//		delete o;
+	//		*it = NULL;
+	//	}
+	//}
 
-	// NOTE: remove_if will swap all deleted items to the end of the vector
-	// then simply trim the vector, this is much more efficient than deleting individual items
-	objects.erase(
-		std::remove_if(objects.begin(), objects.end(), CPlayScene::IsGameObjectDeleted),
-		objects.end());
+	//// NOTE: remove_if will swap all deleted items to the end of the vector
+	//// then simply trim the vector, this is much more efficient than deleting individual items
+	//objects.erase(
+	//	std::remove_if(objects.begin(), objects.end(), CPlayScene::IsGameObjectDeleted),
+	//	objects.end());
 }
